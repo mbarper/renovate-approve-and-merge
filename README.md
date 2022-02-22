@@ -18,7 +18,7 @@ jobs:
     steps:
 # <RENOVATE_HERE>
       - name: Automerge
-        uses: cypher7682/renovate-approve-and-merge@v0.0.1
+        uses: cypher7682/renovate-approve-and-merge@v1.0.0
         with:
           github_token: ${{ secrets.RENOVATE_TOKEN }}
           organisation: <organisation>
