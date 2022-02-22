@@ -53,11 +53,18 @@ def _get_org_repos(org):
         except github.GithubException as e:
             org.log.error("This token has not been given permissions to access these repos")
 
+def _put_pull_attrs(pull):
+    pull.log = logging.getLogger("PULL")
+    pull.real_url = pull.url.replace('api.', '').replace('repos/', '').replace('pulls', 'pull')
+
+def _refresh_pull(repo, pull):
+    p = repo.get_pull(pull.number)
+    _put_pull_attrs(p)
+    return p
 
 def _get_repo_pulls(repo):
     for pull in repo.get_pulls(state="open"):
-        pull.log = logging.getLogger("PULL")
-        pull.real_url = pull.url.replace('api.', '').replace('repos/', '').replace('pulls', 'pull')
+        _put_pull_attrs(pull)
         if LABEL in [l.name for l in pull.labels]:
             yield pull
         else:
@@ -108,7 +115,8 @@ if __name__ == '__main__':
                 while not pull.mergeable:
 
                     # refresh the object, as the mergability doesn't seem to update
-                    pull = repo.get_pull(pull.number)
+                    pull.log.debug(f"Refreshing pull object - {pull.real_url}")
+                    pull = _refresh_pull(repo, pull)
 
                     if not i:
                         pull.log.warning(f"Approval did not make mergable.")
