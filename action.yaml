@@ -1,0 +1,35 @@
+name: 'renovate-approve-and-merge'
+description: 'Automatically approves (and merges) renovate PRs that otherwise would get lost'
+inputs:
+  github_token:
+    description: 'A token with the permissions to access the repos in a particular organisation'
+    required: true
+  organisation:
+    description: 'The organisation name'
+    required: true
+  repo_filter:
+    description: 'Regex filter for the repo names that you want to search in'
+    required: false
+    default: '.'
+  label:
+    description: 'Plaintext filter for the label that renovate will put on PRs that it is trying to automerge'
+    required: false
+    default: 'rnvt_automerge'
+  merge:
+    description: 'Should we merge the PRs that we are approving?'
+    required: false
+    default: 1
+  debug:
+    description: 'Turns on literally all the logs. Prepare your NVME'
+    required: false
+    default: 0
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.github_token }}
+    - ${{ inputs.organisation }}
+    - ${{ inputs.repo_filter }}
+    - ${{ inputs.label }}
+    - ${{ inputs.merge }}
+    - ${{ inputs.debug }}
