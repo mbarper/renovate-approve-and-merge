@@ -20,7 +20,7 @@ jobs:
       - name: Automerge
         uses: cypher7682/renovate-approve-and-merge@v0.0.1
         with:
-          token: ${{ secrets.RENOVATE_TOKEN }}
+          github_token: ${{ secrets.RENOVATE_TOKEN }}
           organisation: <organisation>
           repo_filter: terraform
           label: rnvt_automerge
