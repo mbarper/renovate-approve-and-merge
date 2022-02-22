@@ -106,17 +106,18 @@ if __name__ == '__main__':
 
                 i = 0
                 while not pull.mergeable:
+
+                    # refresh the object, as the mergability doesn't seem to update
+                    pull = repo.get_pull(pull.number)
+
                     if not i:
-                        pull.log.warning(
-                            f"Approval did not make {pull.real_url} mergable. State: {pull.mergeable_state}.\
-                            Mergable: {pull.mergeable}")
+                        pull.log.warning(f"Approval did not make mergable.")
                     elif i < 10:
                         pull.log.warning(f"Back-off {i+1}s waiting for mergability of {pull.real_url}")
                     else:
-                        pull.log.error(f"Could not make {pull.real_url} mergeable")
-                        pull.create_comment(
-                            f"Attempted to automerge this PR, but couldn't because it's in a merge state: \
-                            `{pull.mergeable_state}`.\nMergeable: `{str(pull.mergeable)}`"
+                        pull.log.error(f"Could not make {pull.real_url} mergeable. State: {pull.mergeable_state} {pull.mergeable}")
+                        pull.create_review_comment(
+                            f"Attempted to automerge this PR, but couldn't because it's in a merge state: \n `{pull.mergeable_state}`, `{str(pull.mergeable)}`"
                         )
                         break
                     i += 1
@@ -124,4 +125,5 @@ if __name__ == '__main__':
 
                 else:
                     if MERGE:
+                        pull.log.info(f"{pull.real_url} Mergeability State: {pull.mergeable_state}, {pull.mergeable}")
                         _merge_pull(pull)
