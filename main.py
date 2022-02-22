@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 import sys
 
@@ -11,7 +12,7 @@ try:
     sys.argv[2]
 except IndexError:
     # we are running locally, so put some defaults in to make it easier to run it
-    GIT_TOKEN = sys.argv[1]
+    GIT_TOKEN = os.environ["TOKEN"]
     ORG = "nexmoinc"
     REPO_FILTER = "terraform"
     LABEL = "rnvt_automerge"
@@ -19,12 +20,12 @@ except IndexError:
     DEBUG = False
 else:
     # We're not running locally
-    GIT_TOKEN = sys.argv[1]
-    ORG = sys.argv[2]
-    REPO_FILTER = sys.argv[3]
-    LABEL = sys.argv[4]
-    MERGE = sys.argv[5] == "True" or sys.argv[5] == "1"
-    DEBUG = sys.argv[6] == "True" or sys.argv[6] == "1"
+    GIT_TOKEN = os.environ["TOKEN"]
+    ORG = sys.argv[1]
+    REPO_FILTER = sys.argv[2]
+    LABEL = sys.argv[3]
+    MERGE = sys.argv[4] == "True" or sys.argv[4] == "1"
+    DEBUG = sys.argv[5] == "True" or sys.argv[5] == "1"
 
 logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO, format='[%(levelname)s][%(name)s] %(message)s')
 
