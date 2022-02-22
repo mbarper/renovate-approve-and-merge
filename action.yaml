@@ -1,5 +1,8 @@
 name: 'renovate-approve-and-merge'
 description: 'Automatically approves (and merges) renovate PRs that otherwise would get lost'
+branding:
+  icon: 'git-merge'
+  color: 'white'
 inputs:
   github_token:
     description: 'A token with the permissions to access the repos in a particular organisation'
