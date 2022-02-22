@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import sys
+import time
 
 import github.GithubException
 from github import Github
@@ -15,7 +16,7 @@ except IndexError:
     GIT_TOKEN = sys.argv[1]
     ORG = "nexmoinc"
     REPO_FILTER = "terraform"
-    LABEL = "rnvt_automerge"
+    LABEL = "rnvt-automerge"
     MERGE = True
     DEBUG = False
 else:
@@ -97,14 +98,30 @@ if __name__ == '__main__':
             repo.log.debug(f"Fetching pulls for '{repo.name}'")
 
             for pull in _get_repo_pulls(repo):
-                pull.log.info(f"{pull.real_url} is good to merge")
+                pull.log.info(f"Found {pull.real_url}")
 
                 if not pull.mergeable:
+                    pull.log.info(f"{pull.real_url} is not mergable. Posting an approval to see if that fixes it.")
                     _review_pull(pull)
 
-                if not pull.mergeable:
-                    pull.log.error(f"Approval did not make {pull.real_url} mergable")
-                    continue
+                i = 0
+                while not pull.mergeable:
+                    if not i:
+                        pull.log.warning(
+                            f"Approval did not make {pull.real_url} mergable. State: {pull.mergeable_state}.\
+                            Mergable: {pull.mergeable}")
+                    elif i < 10:
+                        pull.log.warning(f"Back-off {i+1}s waiting for mergability of {pull.real_url}")
+                    else:
+                        pull.log.error(f"Could not make {pull.real_url} mergeable")
+                        pull.create_comment(
+                            f"Attempted to automerge this PR, but couldn't because it's in a merge state: \
+                            `{pull.mergeable_state}`.\nMergeable: `{str(pull.mergeable)}`"
+                        )
+                        break
+                    i += 1
+                    time.sleep(i)
 
-                if MERGE:
-                    _merge_pull(pull)
+                else:
+                    if MERGE:
+                        _merge_pull(pull)
