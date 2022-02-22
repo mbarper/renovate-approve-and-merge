@@ -4,7 +4,7 @@ branding:
   icon: 'git-merge'
   color: 'white'
 inputs:
-  github_token:
+  token:
     description: 'A token with the permissions to access the repos in a particular organisation'
     required: true
   organisation:
