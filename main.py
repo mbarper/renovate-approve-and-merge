@@ -17,6 +17,7 @@ except IndexError:
     ORG = "nexmoinc"
     REPO_FILTER = "terraform"
     LABEL = "rnvt-automerge"
+    NO_LABEL = "rnvt-no-merge"
     MERGE = True
     DEBUG = False
 else:
@@ -25,8 +26,9 @@ else:
     ORG = sys.argv[2]
     REPO_FILTER = sys.argv[3]
     LABEL = sys.argv[4]
-    MERGE = sys.argv[5] == "True" or sys.argv[5] == "1"
-    DEBUG = sys.argv[6] == "True" or sys.argv[6] == "1"
+    NO_LABEL = sys.argv[5]
+    MERGE = sys.argv[6] == "True" or sys.argv[6] == "1"
+    DEBUG = sys.argv[7] == "True" or sys.argv[7] == "1"
 
 logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO, format='[%(levelname)s][%(name)s] %(message)s')
 
@@ -65,7 +67,10 @@ def _refresh_pull(repo, pull):
 def _get_repo_pulls(repo):
     for pull in repo.get_pulls(state="open"):
         _put_pull_attrs(pull)
-        if LABEL in [l.name for l in pull.labels]:
+        if NO_LABEL in [l.name for l in pull.labels]:
+            pull.log.debug(f"{pull.real_url} has '{NO_LABEL}' - ignoring")
+        elif LABEL in [l.name for l in pull.labels]:
+            pull.log.debug(f"{pull.real_url} has '{LABEL}' and no '{NO_LABEL}' - doing")
             yield pull
         else:
             pull.log.debug(f"{pull.real_url} was filtered out because labels didn't match")

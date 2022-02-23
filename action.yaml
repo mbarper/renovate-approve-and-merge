@@ -15,15 +15,19 @@ inputs:
     required: false
     default: '.'
   label:
-    description: 'Plaintext filter for the label that renovate will put on PRs that it is trying to automerge'
+    description: 'Plaintext filter for PRs with this label'
     required: false
     default: 'rnvt_automerge'
+  no_label:
+    description: 'Plaintext filter to IGNORE PRs with this label'
+    required: false
+    default: 'rnvt-no-merge'
   merge:
     description: 'Should we merge the PRs that we are approving?'
     required: false
     default: 1
   debug:
-    description: 'Turns on literally all the logs. Prepare your NVME'
+    description: "Turns on literally all the logs. Useful for if you don't want to set DEBUG on env"
     required: false
     default: 0
 runs:
@@ -34,5 +38,6 @@ runs:
     - ${{ inputs.organisation }}
     - ${{ inputs.repo_filter }}
     - ${{ inputs.label }}
+    - ${{ inputs.no_label }}
     - ${{ inputs.merge }}
     - ${{ inputs.debug }}
