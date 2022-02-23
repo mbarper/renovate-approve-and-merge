@@ -23,7 +23,8 @@ jobs:
           github_token: ${{ secrets.RENOVATE_TOKEN }}
           organisation: <organisation>
           repo_filter: terraform
-          label: rnvt_automerge
+          label: rnvt-automerge
+          no_label: rnvt-no-merge
           merge: 1
           debug: 0
 ```
