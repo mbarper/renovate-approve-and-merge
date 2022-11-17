@@ -129,7 +129,7 @@ if __name__ == '__main__':
                         pull.log.warning(f"{pull.real_url} - Back-off {i+1}s waiting for mergability")
                     else:
                         pull.log.error(f"{pull.real_url} - Could not make mergeable. State: '{pull.mergeable_state}', Mergable: '{pull.mergeable}'")
-                        issue = repo.get_issue(pull.id)
+                        issue = repo.get_issue(pull.number)
                         issue.create_comment(
                             f"Attempted to automerge this PR, but couldn't because it's in a merge state: \n `{pull.mergeable_state}`, and mergability: `{str(pull.mergeable)}`"
                         )
