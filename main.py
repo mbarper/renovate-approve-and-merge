@@ -110,7 +110,7 @@ if __name__ == '__main__':
             repo.log.debug(f"Fetching pulls for '{repo.name}'")
 
             for pull in _get_repo_pulls(repo):
-                pull.log.info(f"Found {pull.real_url}")
+                pull.log.info(f"{pull.real_url} Found")
 
                 if not pull.mergeable:
                     pull.log.info(f"{pull.real_url} is not mergable. Posting an approval to see if that fixes it.")
@@ -120,17 +120,18 @@ if __name__ == '__main__':
                 while not pull.mergeable:
 
                     # refresh the object, as the mergability doesn't seem to update
-                    pull.log.debug(f"Refreshing pull object - {pull.real_url}")
+                    pull.log.debug(f"{pull.real_url} - refreshing pull object")
                     pull = _refresh_pull(repo, pull)
 
                     if not i:
-                        pull.log.warning(f"Approval did not make mergable.")
+                        pull.log.warning(f"{pull.real_url} - Approval did not make mergable.")
                     elif i < 10:
-                        pull.log.warning(f"Back-off {i+1}s waiting for mergability of {pull.real_url}")
+                        pull.log.warning(f"{pull.real_url} - Back-off {i+1}s waiting for mergability")
                     else:
-                        pull.log.error(f"Could not make {pull.real_url} mergeable. State: {pull.mergeable_state} {pull.mergeable}")
-                        pull.create_review_comment(
-                            f"Attempted to automerge this PR, but couldn't because it's in a merge state: \n `{pull.mergeable_state}`, `{str(pull.mergeable)}`"
+                        pull.log.error(f"{pull.real_url} - Could not make mergeable. State: '{pull.mergeable_state}', Mergable: '{pull.mergeable}'")
+                        issue = repo.get_issue(pull.id)
+                        issue.create_comment(
+                            f"Attempted to automerge this PR, but couldn't because it's in a merge state: \n `{pull.mergeable_state}`, and mergability: `{str(pull.mergeable)}`"
                         )
                         break
                     i += 1
