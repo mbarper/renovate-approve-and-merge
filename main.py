@@ -19,7 +19,7 @@ except IndexError:
     NO_LABEL = "rnvt-no-merge"
     MERGE = True
     DEBUG = False
-    APP_ID = 274795
+    INSTALLATION_ID = 32430040
 else:
     # We're not running locally
     GIT_TOKEN = sys.argv[1]
@@ -29,7 +29,7 @@ else:
     NO_LABEL = sys.argv[5]
     MERGE = sys.argv[6] == "True" or sys.argv[6] == "1"
     DEBUG = sys.argv[7] == "True" or sys.argv[7] == "1"
-    APP_ID = sys.argv[8]
+    INSTALLATION_ID = sys.argv[8]
 
 logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO, format='[%(levelname)s][%(name)s] %(message)s')
 
@@ -38,10 +38,10 @@ def _get_orgs(g):
     try:
         org.log = logging.getLogger("ORG")
         for installation in org.get_installations():
-            if installation.id == APP_ID:
+            if installation.id == int(INSTALLATION_ID):
                 yield org
             else:
-                org.log.debug(f"'{installation.id}' was filtered out because it didn't match '{APP_ID}'")
+                org.log.debug(f"'{installation.id}' was filtered out because it didn't match '{INSTALLATION_ID}'")
     except github.GithubException:
         org.log.debug(f"No access to this org by SAML")
 
