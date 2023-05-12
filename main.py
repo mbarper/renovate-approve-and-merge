@@ -119,7 +119,7 @@ if __name__ == '__main__':
                     _review_pull(pull)
 
                 i = 0
-                while not pull.mergeable:
+                while not pull.mergeable or pull.mergeable_state == "blocked":
 
                     # refresh the object, as the mergability doesn't seem to update
                     pull.log.debug(f"{pull.real_url} - refreshing pull object")
