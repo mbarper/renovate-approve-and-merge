@@ -1,0 +1,43 @@
+name: 'renovate-approve-and-merge'
+description: 'Automatically approves (and merges) renovate PRs that otherwise would get lost'
+branding:
+  icon: 'git-merge'
+  color: 'white'
+inputs:
+  github_token:
+    description: 'A token with the permissions to access the repos in a particular organisation'
+    required: true
+  organisation:
+    description: 'The organisation name'
+    required: true
+  repo_filter:
+    description: 'Regex filter for the repo names that you want to search in'
+    required: false
+    default: '.'
+  label:
+    description: 'Plaintext filter for PRs with this label'
+    required: false
+    default: 'rnvt_automerge'
+  no_label:
+    description: 'Plaintext filter to IGNORE PRs with this label'
+    required: false
+    default: 'rnvt-no-merge'
+  merge:
+    description: 'Should we merge the PRs that we are approving?'
+    required: false
+    default: 1
+  debug:
+    description: "Turns on literally all the logs. Useful for if you don't want to set DEBUG on env"
+    required: false
+    default: 0
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.github_token }}
+    - ${{ inputs.organisation }}
+    - ${{ inputs.repo_filter }}
+    - ${{ inputs.label }}
+    - ${{ inputs.no_label }}
+    - ${{ inputs.merge }}
+    - ${{ inputs.debug }}
